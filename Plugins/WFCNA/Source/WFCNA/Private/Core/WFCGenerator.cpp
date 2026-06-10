@@ -1,4 +1,5 @@
-﻿// Copyright Bohdon Sayre. All Rights Reserved.
+// Copyright Bohdon Sayre. All Rights Reserved.
+// Modified portions Copyright maxi3777, 2026
 
 
 #include "Core/WFCGenerator.h"

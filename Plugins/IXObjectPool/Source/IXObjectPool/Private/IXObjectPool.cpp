@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright maxi3777. All Rights Reserved.
 
 #include "IXObjectPool.h"
 

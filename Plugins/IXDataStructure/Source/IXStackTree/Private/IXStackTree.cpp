@@ -1,4 +1,6 @@
-﻿#include "IXStackTree.h"
+// Copyright maxi3777. All Rights Reserved.
+
+#include "IXStackTree.h"
 
 #define LOCTEXT_NAMESPACE "FIXStackTreeModule"
 

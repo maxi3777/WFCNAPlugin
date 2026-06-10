@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Bohdon Sayre. All Rights Reserved.
+// Modified portions Copyright maxi3777, 2026
 
 #pragma once
 

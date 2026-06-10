@@ -1,4 +1,6 @@
-﻿using UnrealBuildTool;
+// Copyright maxi3777. All Rights Reserved.
+
+using UnrealBuildTool;
 
 public class ISMManager : ModuleRules
 {

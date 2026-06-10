@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright maxi3777. All Rights Reserved.
 
 
 #include "WFCChainActor.h"

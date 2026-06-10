@@ -1,4 +1,6 @@
-﻿#include "ISMManager.h"
+// Copyright maxi3777. All Rights Reserved.
+
+#include "ISMManager.h"
 
 #define LOCTEXT_NAMESPACE "FISMManagerModule"
 
