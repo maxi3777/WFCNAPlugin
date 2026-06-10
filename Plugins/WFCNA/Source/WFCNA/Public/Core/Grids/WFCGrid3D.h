@@ -1,0 +1,82 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Core/WFCGrid.h"
+#include "WFCGrid3D.generated.h"
+
+
+class FAsyncGrid3D;
+/**
+ * A 3D grid configuration.
+ */
+UCLASS()
+class WFCNA_API UWFCGrid3DConfig : public UWFCGridConfig
+{
+	GENERATED_BODY()
+
+public:
+	UWFCGrid3DConfig();
+
+	/** The dimensions of the grid */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntVector Dimensions;
+
+	/** The size of one cell in cm */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector CellSize;
+};
+
+
+/**
+ * A 3D grid
+ */
+UCLASS()
+class WFCNA_API UWFCGrid3D : public UWFCGrid
+{
+	GENERATED_BODY()
+
+public:
+	UWFCGrid3D();
+
+	virtual void Initialize(const UWFCGridConfig* Config) override;
+
+	/** The dimensions of the grid */
+	UPROPERTY(BlueprintReadWrite)
+	FIntVector Dimensions;
+
+	/** The size of one cell in cm */
+	UPROPERTY(BlueprintReadWrite)
+	FVector CellSize;
+
+	virtual int32 GetNumCells() const override;
+	FORCEINLINE virtual int32 GetNumDirections() const override { return 6; }
+	virtual FString GetDirectionName(int32 Direction) const override;
+	virtual FString GetCellName(int32 CellIndex) const override;
+	virtual FWFCGridDirection GetOppositeDirection(FWFCGridDirection Direction) const override;
+	virtual FWFCGridDirection RotateDirection(FWFCGridDirection Direction, int32 Rotation) const override;
+	virtual FWFCGridDirection InverseRotateDirection(FWFCGridDirection Direction, int32 Rotation) const override;
+	virtual int32 CombineRotations(int32 RotationA, int32 RotationB) const override;
+	virtual FWFCCellIndex GetCellIndexInDirection(FWFCCellIndex CellIndex, FWFCGridDirection Direction) const override;
+
+	/** Use for Nesting Generation */
+	virtual FVector GetCenterOffsetToOrigin(FIntVector GridLocation) const override;
+	
+	/** Return the cell index for a grid location */
+	UFUNCTION(BlueprintPure)
+	int32 GetCellIndexForLocation(FIntVector GridLocation) const;
+
+	/** Return the grid location for a cell */
+	UFUNCTION(BlueprintPure)
+	FIntVector GetLocationForCellIndex(int32 CellIndex) const;
+
+	virtual FVector GetCellWorldLocation(int32 CellIndex, bool bCenter) const override;
+	virtual FTransform GetCellWorldTransform(int32 CellIndex, int32 Rotation) const override;
+	virtual FTransform GetRotationTransform(int32 Rotation) const override;
+	virtual FIntVector GetDirectionVector(int32 Direction) const override;
+
+	static FIntVector GetDirectionVectorStatic(int32 Direction);
+
+	virtual TSharedPtr<FAsyncGrid> CreateAsyncGrid() override;
+};

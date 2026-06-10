@@ -1,0 +1,178 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Core/Constraints/WFCFixedTileConstraint.h"
+
+#include "WFCModule.h"
+#include "WFCAssetModel.h"
+#include "Core/WFCGenerator.h"
+#include "Core/Constraints/AsyncFixedTileConstraint.h"
+#include "Core/Grids/WFCGrid3D.h"
+#include "Core/Grids/WFCGrid3DHex.h"
+#include "Stats/StatsMisc.h"
+
+DECLARE_DWORD_ACCUMULATOR_STAT(TEXT("Fixed Tile Constraint - Mappings"), STAT_WFCFixedTileConstraintMappings, STATGROUP_WFC);
+
+
+void UWFCFixedTileConstraint::Initialize(UWFCGenerator* InGenerator)
+{
+	Super::Initialize(InGenerator);
+	SET_DWORD_STAT(STAT_WFCFixedTileConstraintMappings, 0);
+}
+
+void UWFCFixedTileConstraint::Reset()
+{
+	Super::Reset();
+
+	bDidApplyInitialConstraint = false;
+}
+
+void UWFCFixedTileConstraint::AddFixedTileMapping(FWFCCellIndex CellIndex, FWFCTileId TileId)
+{
+	INC_DWORD_STAT(STAT_WFCFixedTileConstraintMappings);
+	FixedTileMappings.Add(FWFCFixedTileConstraintEntry(CellIndex, TileId));
+}
+
+TUniquePtr<FAsyncConstraint> UWFCFixedTileConstraint::CreateAsyncConstraint(FAsyncGenerator* InGenerator,
+	TSharedPtr<FAsyncGrid> InGrid, TSharedPtr<FAsyncModel> InModel)
+{
+	return MakeUnique<FAsyncFixedTileConstraint>(InGenerator, InGrid, InModel, FixedTileMappings, bDidApplyInitialConstraint);
+}
+
+
+// 3D Fixed Tile Constraints
+// -------------------------
+
+
+void UWFCFixedTile3DConstraint::Initialize(UWFCGenerator* InGenerator)
+{
+	Super::Initialize(InGenerator);
+
+	SCOPE_LOG_TIME(TEXT("UWFCFixedTile3DConstraint::Initialize"), nullptr);
+
+	const UWFCGrid3D* Grid3D = Cast<UWFCGrid3D>(Grid);
+	if (!Grid3D)
+	{
+		UE_LOG(LogWFC, Error, TEXT("UWFCFixedTile3DConstraint requires a UWFCGrid3D to be used: %s"),
+		       *GetNameSafe(GetOuter()));
+		return;
+	}
+
+	const UWFCAssetModel* AssetModel = Cast<UWFCAssetModel>(Model);
+	if (!AssetModel)
+	{
+		UE_LOG(LogWFC, Error, TEXT("UWFCFixedTile3DConstraint requires a UWFCAssetModel to be used: %s"),
+		       *GetNameSafe(GetOuter()));
+		return;
+	}
+
+	for (const FWFCFixedTileConstraint3DEntry& FixedTile : FixedTiles)
+	{
+		if (!FixedTile.TileAsset)
+		{
+			// TODO: move to asset validation
+			UE_LOG(LogWFC, Warning, TEXT("Found invalid fixed tile constraint in %s"), *GetNameSafe(GetOuter()));
+			continue;
+		}
+
+		// get the cell index
+		const FWFCCellIndex CellIndex = Grid3D->GetCellIndexForLocation(FixedTile.CellLocation);
+		if (!GetGenerator()->IsValidCellIndex(CellIndex))
+		{
+			UE_LOG(LogWFC, Warning, TEXT("Found invalid fixed tile constraint in %s, location not valid: %s"),
+			       *GetNameSafe(GetOuter()), *FixedTile.CellLocation.ToString());
+			continue;
+		}
+
+		// get the tile id
+		int32 TileDefIndex;
+		FixedTile.TileAsset->GetTileDefByLocation(FIntVector(0, 0, 0), TileDefIndex);
+		const FWFCTileId TileId = AssetModel->GetTileIdForAssetAndRotation(FixedTile.TileAsset, TileDefIndex, FixedTile.TileRotation);
+		if (!GetGenerator()->IsValidTileId(TileId))
+		{
+			UE_LOG(LogWFC, Warning, TEXT("Found invalid fixed tile constraint in %s, tile asset and rotation not found: %s, %d"),
+			       *GetNameSafe(GetOuter()), *FixedTile.TileAsset->GetName(), FixedTile.TileRotation);
+			continue;
+		}
+
+		// TODO: add constraint for all parts of the large tile, to save arc consistency some effort
+
+		// add the constraint
+		AddFixedTileMapping(CellIndex, TileId);
+	}
+}
+
+TUniquePtr<FAsyncConstraint> UWFCFixedTile3DConstraint::CreateAsyncConstraint(FAsyncGenerator* InGenerator,
+	TSharedPtr<FAsyncGrid> InGrid, TSharedPtr<FAsyncModel> InModel)
+{
+	return Super::CreateAsyncConstraint(InGenerator, InGrid, InModel);
+}
+
+
+// 3DHex Fixed Tile Constraints
+// -------------------------
+
+
+void UWFCFixedTile3DHexConstraint::Initialize(UWFCGenerator* InGenerator)
+{
+	Super::Initialize(InGenerator);
+
+	SCOPE_LOG_TIME(TEXT("UWFCFixedTile3DHexConstraint::Initialize"), nullptr);
+
+	const UWFCGrid3DHex* Grid3DHex = Cast<UWFCGrid3DHex>(Grid);
+	if (!Grid3DHex)
+	{
+		UE_LOG(LogWFC, Error, TEXT("UWFCFixedTile3DHexConstraint requires a UWFCGrid3DHex to be used: %s"),
+		       *GetNameSafe(GetOuter()));
+		return;
+	}
+
+	const UWFCAssetModel* AssetModel = Cast<UWFCAssetModel>(Model);
+	if (!AssetModel)
+	{
+		UE_LOG(LogWFC, Error, TEXT("UWFCFiledTile3DConstraint requires a UWFCAssetModel to be used: %s"),
+		       *GetNameSafe(GetOuter()));
+		return;
+	}
+
+	for (const FWFCFixedTileConstraint3DHexEntry& FixedTile : FixedTiles)
+	{
+		if (!FixedTile.TileAsset)
+		{
+			// TODO: move to asset validation
+			UE_LOG(LogWFC, Warning, TEXT("Found invalid fixed tile constraint in %s"), *GetNameSafe(GetOuter()));
+			continue;
+		}
+
+		// get the cell index
+		const FWFCCellIndex CellIndex = Grid3DHex->GetCellIndexForLocation(FixedTile.CellLocation);
+		if (!GetGenerator()->IsValidCellIndex(CellIndex))
+		{
+			UE_LOG(LogWFC, Warning, TEXT("Found invalid fixed tile constraint in %s, location not valid: %s"),
+			       *GetNameSafe(GetOuter()), *FixedTile.CellLocation.ToString());
+			continue;
+		}
+
+		// get the tile id
+		int32 TileDefIndex;
+		FixedTile.TileAsset->GetTileDefByLocation(FIntVector(0, 0, 0), TileDefIndex);
+		const FWFCTileId TileId = AssetModel->GetTileIdForAssetAndRotation(FixedTile.TileAsset, TileDefIndex, FixedTile.TileRotation);
+		if (!GetGenerator()->IsValidTileId(TileId))
+		{
+			UE_LOG(LogWFC, Warning, TEXT("Found invalid fixed tile constraint in %s, tile asset and rotation not found: %s, %d"),
+			       *GetNameSafe(GetOuter()), *FixedTile.TileAsset->GetName(), FixedTile.TileRotation);
+			continue;
+		}
+
+		// TODO: add constraint for all parts of the large tile, to save arc consistency some effort
+
+		// add the constraint
+		AddFixedTileMapping(CellIndex, TileId);
+	}
+}
+
+TUniquePtr<FAsyncConstraint> UWFCFixedTile3DHexConstraint::CreateAsyncConstraint(FAsyncGenerator* InGenerator,
+	TSharedPtr<FAsyncGrid> InGrid, TSharedPtr<FAsyncModel> InModel)
+{
+	return Super::CreateAsyncConstraint(InGenerator, InGrid, InModel);
+}

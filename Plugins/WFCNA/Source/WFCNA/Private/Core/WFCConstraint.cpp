@@ -1,0 +1,55 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Core/WFCConstraint.h"
+
+#include "Core/AsyncConstraint.h"
+#include "Core/WFCGenerator.h"
+
+
+void UWFCConstraint::Initialize(UWFCGenerator* InGenerator)
+{
+	Generator = InGenerator;
+	check(Generator != nullptr);
+
+	Grid = Generator->GetGrid();
+	check(Grid != nullptr);
+
+	Model = Generator->GetModel();
+	check(Model != nullptr);
+}
+
+void UWFCConstraint::Reset()
+{
+}
+
+void UWFCConstraint::NotifyCellChanged(FWFCCellIndex CellIndex, bool bHasSelection)
+{
+}
+
+void UWFCConstraint::NotifyCellBan(FWFCCellIndex CellIndex, FWFCTileId BannedTileId)
+{
+}
+
+bool UWFCConstraint::Next()
+{
+	return false;
+}
+
+void UWFCConstraint::LogDebugInfo() const
+{
+}
+
+UWFCConstraintSnapshot* UWFCConstraint::CreateSnapshot(UObject* Outer) const
+{
+	return nullptr;
+}
+
+void UWFCConstraint::ApplySnapshot(const UWFCConstraintSnapshot* Snapshot)
+{
+}
+
+TUniquePtr<FAsyncConstraint> UWFCConstraint::CreateAsyncConstraint(FAsyncGenerator* InGenerator, TSharedPtr<FAsyncGrid> InGrid, TSharedPtr<FAsyncModel> InModel)
+{
+	return MakeUnique<FAsyncConstraint>(InGenerator, InGrid, InModel);
+}
