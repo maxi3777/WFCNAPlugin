@@ -2,16 +2,16 @@
 
 # WFCNA (高级波函数坍塌) 插件
 
-> 一款先进的、面向工业级生产的虚幻引擎（Unreal Engine）程序化生成插件，基于 [波函数坍塌 (Wave Function Collapse)](https://github.com/mxgmn/WaveFunctionCollapse) 算法构建。
+> 一款先进的、面向工业级生产的虚幻引擎程序化生成插件，基于 [波函数坍塌 (Wave Function Collapse)](https://github.com/mxgmn/WaveFunctionCollapse) 算法构建。
 
 本项目基于 [bohdon 的 WFCPlugin](https://github.com/bohdon/WFCPlugin) 的基础概念，针对**工业级游戏开发**进行了深度扩展与重构。具备真正的异步并发生成、六棱柱网格、嵌套大世界生成、高性能对象池以及多人联机网络同步等高级特性。
 
 ---
 
-## 🌟 核心特性 (Features)
+## 🌟 核心特性
 
 - **真正的异步与并发生成**  
-  通过 UE 的任务系统（Task System）采用“拷贝出 - 处理 - 拷贝回（Copy out - Process - Copy in）”架构，确保在生成超大网格时也绝不阻塞`游戏主线程（Game Thread）`。
+  通过 UE 的任务系统（Task System）采用 Copy out - Process - Copy in 架构，确保在生成超大网格时也绝不阻塞`游戏主线程（Game Thread）`。
 - **高级网格支持**  
   除了 2D 和 3D 方块网格，原生支持 **3D 六棱柱网格（3D Hexagonal Prism Grids）**（基于 Odd-r 偏移坐标与立方体 Cube 坐标数学体系），非常适合策略与战棋类游戏。
 - **嵌套式 WFC (分治法)**  
@@ -34,7 +34,7 @@ https://github.com/user-attachments/assets/3b4d11a2-a935-45b4-99ff-a0138031f6fa
 
 ---
 
-## ⚙️ 架构概览 (Overview)
+## ⚙️ 架构概览
 
 ### 核心生成管线
 
@@ -53,7 +53,7 @@ https://github.com/user-attachments/assets/3b4d11a2-a935-45b4-99ff-a0138031f6fa
 
 ---
 
-## 🚀 快速上手 (Getting Started)
+## 🚀 快速上手
 
 1. **创建配置 (Create the Configurations)**
    - 创建一个 `UWFCAsset`。为其分配你的网格配置（如 `UWFCGrid3DHexConfig`）、图块模型、选择器以及约束类（如边界约束和边缘约束）。
@@ -73,7 +73,7 @@ https://github.com/user-attachments/assets/3b4d11a2-a935-45b4-99ff-a0138031f6fa
 
 ---
 
-## 🌐 联机同步设置 (Multiplayer Setup)
+## 🌐 联机同步设置
 
 为了确保多人联机同步能够开箱即用：
 
@@ -82,3 +82,19 @@ https://github.com/user-attachments/assets/3b4d11a2-a935-45b4-99ff-a0138031f6fa
   
 - **对于 Actor 实体：**  
   确保你的 Actor 实现了 `UIxActivationInterface` 接口，并挂载了 `UIxPoolStateComponent` 组件。将你的生成/隐藏视觉逻辑（如 Timeline 动画、粒子特效等）添加到蓝图的 `Activate` 和 `Deactivate` 事件中。服务端仅负责翻转对象池状态，客户端会自发且原生地上演所有的视觉表现。
+  
+--- 
+
+## 🖼️ 演示图
+
+<img width="556" height="219" alt="Image" src="https://github.com/user-attachments/assets/b5021d81-a15c-4461-831f-941a5a863ab2" />
+
+<img width="555" height="211" alt="Image" src="https://github.com/user-attachments/assets/07f28b6c-2707-4dc6-9b56-272cd67bbcd4" />
+
+<img width="651" height="265" alt="Image" src="https://github.com/user-attachments/assets/48cc7f04-44ea-4a95-a1df-8c64555f2b86" />
+
+<img width="594" height="306" alt="Image" src="https://github.com/user-attachments/assets/2c3dc401-4b59-4ef3-aade-2079f3bf752b" />
+
+<img width="833" height="311" alt="Image" src="https://github.com/user-attachments/assets/b4477b58-5ed3-4d25-8e31-327a25210775" />
+
+<img width="809" height="305" alt="Image" src="https://github.com/user-attachments/assets/51a754df-d398-4660-b154-0eef7736ad7a" />
