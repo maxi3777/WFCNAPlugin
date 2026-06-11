@@ -16,6 +16,9 @@
   除了 2D 和 3D 方块网格，原生支持 **3D 六棱柱网格（3D Hexagonal Prism Grids）**（基于 Odd-r 偏移坐标与立方体 Cube 坐标数学体系），非常适合策略与战棋类游戏。
 - **嵌套式 WFC (分治法)**  
   支持通过在宏观 WFC 区块中嵌套微观 WFC 单元来生成庞大的大世界，有效防止维度爆炸与沉重的重试惩罚。
+
+https://github.com/user-attachments/assets/764952d4-27b8-482b-a6be-5df100b022f7
+  
 - **StackTree 生命周期管理**  
   使用自定义的 `StackTree`（基于 LIFO 栈与引用计数）结构，安全地管理嵌套生成的异步依赖与内存清理。
 - **双轨制对象池 (Dual-Track Object Pooling)**  
@@ -23,6 +26,9 @@
   - **Actor 池：** 采用“生成一次，多次休眠”的机制管理复杂的逻辑实体，彻底杜绝 GC（垃圾回收）卡顿。
 - **低带宽多端网络同步**  
   废弃了繁重的 Actor RPC 指令，改用连续内存数组多播（针对 ISM）和单布尔值“状态开关”（针对 Actor），确保客户端零残影、零延迟。
+
+https://github.com/user-attachments/assets/3b4d11a2-a935-45b4-99ff-a0138031f6fa
+  
 - **数据驱动与模块化约束**  
   完全通过 `数据资产 (Data Assets)` 和 `游戏标签 (Gameplay Tags)` 进行配置。包含全新的约束模块：*边缘排斥 (Edge Block)*、*空间区域 (Position)*、*多重边界 (Multiple Boundary)*、*固定位置 (Fixed Tile)* 以及 *数量限制 (Count Constraints)*，并利用内存**快照 (Snapshots)** 机制实现瞬间重试。
 
