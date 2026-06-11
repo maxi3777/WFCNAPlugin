@@ -82,3 +82,19 @@ To ensure multiplayer synchronization works out of the box:
   
 - **For Actors:**  
   Ensure your Actor implements `UIxActivationInterface` and has a `UIxPoolStateComponent`. Add your spawn/hide visual logic (Timeline, Particles, etc.) to the `Activate` and `Deactivate` blueprint events. The server will flip the pool state, and the client will handle the visuals natively.
+
+--- 
+
+## 🖼️ Demonstration
+
+<img width="556" height="219" alt="Image" src="https://github.com/user-attachments/assets/b5021d81-a15c-4461-831f-941a5a863ab2" />
+
+<img width="555" height="211" alt="Image" src="https://github.com/user-attachments/assets/07f28b6c-2707-4dc6-9b56-272cd67bbcd4" />
+
+<img width="651" height="265" alt="Image" src="https://github.com/user-attachments/assets/48cc7f04-44ea-4a95-a1df-8c64555f2b86" />
+
+<img width="594" height="306" alt="Image" src="https://github.com/user-attachments/assets/2c3dc401-4b59-4ef3-aade-2079f3bf752b" />
+
+<img width="833" height="311" alt="Image" src="https://github.com/user-attachments/assets/b4477b58-5ed3-4d25-8e31-327a25210775" />
+
+<img width="809" height="305" alt="Image" src="https://github.com/user-attachments/assets/51a754df-d398-4660-b154-0eef7736ad7a" />
